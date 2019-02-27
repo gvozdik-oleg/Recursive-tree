@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tree</title>
+</head>
+<body>
+    <canvas id="tree" ></canvas>
+    <div class="settings">
+        <label>
+            Size decrement
+            <input type="text" id="sizeCoef">
+        </label>
+        <label>
+            Length
+            <input type="text" id="length">
+        </label>
+        <label>
+            Angle
+            <input type="text" id="angle">
+        </label>
+    </div>
+    <script>
+        var size = 800;
+        var length = 160;
+        var angle = Math.PI / 8;
+        var sizeCoef = 0.75;
+        var height = 7;
+
+        document.getElementById('sizeCoef').setAttribute('value', sizeCoef);
+        document.getElementById('length').setAttribute('value', length);
+        document.getElementById('angle').setAttribute('value', angle);
+        var inputs = document.querySelectorAll('.settings input');
+        inputs.forEach(element => {
+            element.addEventListener('change', function (e) {
+                var id = e.target.getAttribute('id');
+                window[id] = e.target.value;
+                drawTree();
+            })
+        });
+
+        function drawTree() {
+
+            var canvas = document.getElementById('tree');
+            canvas.setAttribute('height', size);
+            canvas.setAttribute('width', size);
+
+            var context = canvas.getContext('2d');
+            context.fillStyle ='#ccc';
+            context.fillRect(0, 0, size, size);
+            context.translate(size / 2, size);
+            branch(length, height);
+
+            function branch(length, lineThick) {
+
+                context.lineWidth = lineThick;
+                context.beginPath();
+                context.moveTo(0 , 0);
+                var offet = Math.random()*5 - length
+                context.lineTo(0, offet );        
+                context.stroke();
+                
+                if (length > 5) {
+                    
+                    //draw left
+                    context.translate(0, offet);
+                    context.save();                
+                    context.rotate(-angle);
+                    branch(length * sizeCoef, lineThick*0.7);
+                    context.restore();
+                    //draw right
+                    context.save();                
+                    context.rotate(angle);
+                    branch(length * sizeCoef, lineThick*0.7);
+                    context.restore();
+                    
+                    
+                }
+
+            }
+        }
+        drawTree();
+    </script>
+</body>
+</html>
